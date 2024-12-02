@@ -1,7 +1,10 @@
-import CVSearchPage from "@/pages/CVSearchPage";
+// import CVSearchPage from "@/app/CVSearchPage";
 import { applications } from "@/constants/apps";
 import { countries, edu, yearsOfexp } from "@/constants/constants";
 import { Filters, View } from "@/types";
+import dynamic from "next/dynamic";
+
+const CvsPge = dynamic(() => import("@/app/CVSearchPage"), { ssr: false });
 
 export default function Home() {
   async function getCVCountries() {
@@ -60,7 +63,7 @@ export default function Home() {
   }
 
   return (
-    <CVSearchPage
+    <CvsPge
       actions={{ getApplications, getCVCountries, getEducationOptions, getYearsOfExp }}
       applications={applications}
     />
