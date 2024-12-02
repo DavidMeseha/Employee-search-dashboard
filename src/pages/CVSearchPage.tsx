@@ -1,10 +1,9 @@
 "use client";
 
-import { getApplications } from "@/server";
 import CvsDispay from "@/components/CvsDispay";
 import SideFilters from "@/components/SideFilters";
 import { exactObjectIndex, includesExactObject } from "@/misc";
-import { Filters, View } from "@/types";
+import { Actions, Application, Filters, View } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
@@ -19,16 +18,22 @@ const viewInit: View = {
   state: "all"
 };
 
-export default function CVSearchPage() {
+interface Props {
+  actions: Actions;
+  applications: Application[];
+}
+
+export default function CVSearchPage({ actions, applications }: Props) {
   const [filters, setFilters] = useState<Filters>(filtersInit);
   const [view, setView] = useState<View>(viewInit);
   const [showFilters, setShowFilters] = useState(false);
 
   const applicationsQuery = useQuery({
     queryKey: ["apps", filters, view],
-    queryFn: () => getApplications(filters, view)
+    queryFn: () => Promise.resolve(applications),
+    enabled: !applications
   });
-  const applications = applicationsQuery.data ?? [];
+  const apps: Application[] = applicationsQuery.data ?? [];
 
   const handleFilterChange = (name: keyof Filters, value: any) => {
     const tempValues = [...filters[name]];
@@ -52,12 +57,18 @@ export default function CVSearchPage() {
 
   return (
     <main className="flex gap-4">
-      <SideFilters filters={filters} handleChange={handleFilterChange} show={showFilters} close={()=>setShowFilters(false)} />
+      <SideFilters
+        actions={actions}
+        close={() => setShowFilters}
+        filters={filters}
+        handleChange={handleFilterChange}
+        isOpen={showFilters}
+      />
       <CvsDispay
-        toggleFilters={() => setShowFilters(!showFilters)}
-        applications={applications}
+        applications={apps.length > 0 ? apps : applications}
         handleChange={handleViewChange}
         isPending={applicationsQuery.isFetching}
+        toggleFilters={() => setShowFilters(!showFilters)}
         view={view}
       />
     </main>

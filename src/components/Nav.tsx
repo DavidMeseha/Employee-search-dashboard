@@ -1,9 +1,11 @@
+"use client";
+
 import { MenuItem, Select } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const menu = [
+export const menu = [
   {
     name: "Dashboard",
     to: "/dashboard"
@@ -60,7 +62,7 @@ export default function Nav() {
           }}
         >
           {menu.map((item) => (
-            <MenuItem value={item.to}>
+            <MenuItem key={item.name} value={item.to}>
               <Link href={item.to}>{item.name}</Link>
             </MenuItem>
           ))}

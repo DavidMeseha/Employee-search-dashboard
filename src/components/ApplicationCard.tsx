@@ -44,28 +44,28 @@ export default function ApplicationCard({ application }: Props) {
                 <span className="text-red-500">Applied {moment(application.appliedDate).fromNow()}</span>
               </div>
               <div className="mb-2 flex items-start">
-                <div className="text-strong-subtext grid flex-grow grid-cols-2 items-start gap-2 lg:grid-cols-3">
-                  <div className="flex items-center gap-4">
+                <div className="grid flex-grow grid-cols-2 items-start gap-2 text-strong-subtext lg:grid-cols-3">
+                  <div className="flex items-start gap-4">
                     <FaMapLocationDot className="fill-primary" size={20} />
                     {application.applicant.location}
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4">
                     <GiAges className="fill-primary" size={20} />
                     {application.applicant.age} years old
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4">
                     <FaSquarePersonConfined className="fill-primary" size={20} />
                     {application.applicant.experienceYears} years Experience
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4">
                     <GiGraduateCap className="fill-primary" size={20} />
                     {application.applicant.degree}
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4">
                     <BsPersonFill className="fill-primary" size={20} />
                     {application.applicant.careerLevel}
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-start gap-4">
                     <PiHandbagFill className="fill-primary" size={20} />
                     {application.applicant.field}
                   </div>
@@ -102,7 +102,7 @@ export default function ApplicationCard({ application }: Props) {
               )}
             </div>
           </div>
-          <div className="bg-primary-highlight mb-4 flex flex-wrap">
+          <div className="mb-4 flex flex-wrap bg-primary-highlight">
             <div className="w-1/3 min-w-fit p-2 font-semibold">Contact Info.</div>
             {isLocked ? (
               <div className="w-1/2 p-2 text-red-600">Click Unlock profile to view contact information</div>
@@ -124,7 +124,7 @@ export default function ApplicationCard({ application }: Props) {
       <div className="space-y-1.5 bg-secondary-highlight p-4">
         {application.applicant.experience.map((exp, index) => (
           <div className="grid grid-cols-4 gap-1 sm:grid-cols-5" key={index}>
-            <div className="col-span-2 sm:col-span-3 font-bold">{exp.title}</div>
+            <div className="col-span-2 font-bold sm:col-span-3">{exp.title}</div>
             <div className="order-2 w-28 border border-subtext bg-white p-0.5 ps-2">
               <CountryFlag className="me-2 rounded-md text-base" countryCode={exp.country.code} svg />
               <span className="text-[10px]">{exp.country.name}</span>

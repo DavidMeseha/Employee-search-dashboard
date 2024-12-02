@@ -22,8 +22,8 @@ export default function CvsDispay({ applications, isPending, view, handleChange,
     <section className="min-h-[160dvh] w-[calc(100%)] px-6 lg:w-[calc(100%-256px)]">
       <h1 className="mb-6 text-2xl font-bold text-primary-shade">Clinical Pharmacist in Damam, Saudi Arabia</h1>
 
-      <div className="flex flex-col gap-6 text-subtext lg:flex-row flex-grow">
-        <div className="overflow-auto w-full">
+      <div className="flex flex-grow flex-col gap-6 text-subtext lg:flex-row">
+        <div className="w-full overflow-auto">
           <ul className="flex min-w-[600px] items-end gap-4 border-b text-center text-sm font-semibold">
             <li className="w-1/4">
               <button
@@ -64,7 +64,7 @@ export default function CvsDispay({ applications, isPending, view, handleChange,
         </div>
 
         <div className="flex items-end justify-between">
-          <button onClick={toggleFilters} className="flex gap-2 text-primary lg:hidden">
+          <button className="flex gap-2 text-primary lg:hidden" onClick={toggleFilters}>
             <RiFilterFill size={25} />
             Filers
           </button>

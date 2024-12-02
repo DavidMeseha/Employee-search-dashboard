@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Epilogue } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
 import React from "react";
-import ProvideQueryClient from "@/providers/ProvideQueryClient";
 import "react-loading-skeleton/dist/skeleton.css";
+import MainLayout from "@/components/MainLayout";
 
 const epilogue = Epilogue({ subsets: ["latin"], display: "swap" });
 
@@ -21,10 +20,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={epilogue.className}>
-        <Header />
-        <ProvideQueryClient>
+        <MainLayout>
           <div className="py-4">{children}</div>
-        </ProvideQueryClient>
+        </MainLayout>
       </body>
     </html>
   );

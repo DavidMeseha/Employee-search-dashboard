@@ -1,9 +1,8 @@
-import { getCVCountries, getEducationOptions, getYearsOfExp } from "@/server";
 import CheckboxListLoading from "@/components/loading-ui/CheckboxListLoading";
 import AppCheckbox from "@/components/ui/AppCheckbox";
 import SearchField from "@/components/ui/SearchField";
 import { includesExactObject } from "@/misc";
-import { Filters } from "@/types";
+import { Actions, Filters } from "@/types";
 import { Collapse, FormControlLabel, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
@@ -13,11 +12,12 @@ import { CgClose } from "react-icons/cg";
 type Props = {
   handleChange: (name: keyof Filters, value: any) => void;
   filters: Filters;
-  show: boolean;
+  isOpen: boolean;
   close: () => void;
+  actions: Actions;
 };
 
-export default function SideFilters({ handleChange, filters, show, close }: Props) {
+export default function SideFilters({ handleChange, filters, isOpen, close, actions }: Props) {
   const [showResidency, setShowResidency] = useState<boolean>(true);
   const [showEducation, setShowEducation] = useState<boolean>(true);
   const [showExperience, setShowExperience] = useState<boolean>(true);
@@ -25,7 +25,7 @@ export default function SideFilters({ handleChange, filters, show, close }: Prop
 
   const countriesQuery = useQuery({
     queryKey: ["search-countries-data"],
-    queryFn: () => getCVCountries()
+    queryFn: () => actions.getCVCountries()
   });
   const countries = countriesQuery.data?.countries ?? [];
   const total = countriesQuery.data?.total;
@@ -35,23 +35,23 @@ export default function SideFilters({ handleChange, filters, show, close }: Prop
 
   const educationQuery = useQuery({
     queryKey: ["education-filter-data"],
-    queryFn: () => getEducationOptions()
+    queryFn: () => actions.getEducationOptions()
   });
   const educationOptions = educationQuery.data?.edu ?? [];
 
   const experianceQuery = useQuery({
     queryKey: ["experiance-filter-data"],
-    queryFn: () => getYearsOfExp()
+    queryFn: () => actions.getYearsOfExp()
   });
   const experiance = experianceQuery.data?.yearsOfexp ?? [];
 
   return (
     <aside
-      className={`fixed bottom-0 start-0 transition-transform overflow-auto lg:overflow-hidden ${show ? "translate-x-0" : "-translate-x-64 lg:translate-x-0"} top-20 w-64 border border-secondary bg-white lg:static lg:h-fit`}
+      className={`fixed bottom-0 start-0 overflow-auto transition-transform lg:overflow-hidden ${isOpen ? "translate-x-0" : "-translate-x-64 lg:translate-x-0"} top-20 w-64 border border-secondary bg-white lg:static lg:h-fit`}
     >
       <div className="flex bg-secondary py-3 text-center text-2xl font-bold">
         <span className="flex-grow">Filter</span>
-        <button onClick={close} className="inline pe-2 text-gray-400 lg:hidden">
+        <button className="inline pe-2 text-gray-400 lg:hidden" onClick={close}>
           <CgClose />
         </button>
       </div>
