@@ -23,15 +23,14 @@ interface Props {
   applications: Application[];
 }
 
-export default function CVSearchPage({ actions, applications }: Props) {
+export default function CVSearchPage({ actions }: Props) {
   const [filters, setFilters] = useState<Filters>(filtersInit);
   const [view, setView] = useState<View>(viewInit);
   const [showFilters, setShowFilters] = useState(false);
 
   const applicationsQuery = useQuery({
     queryKey: ["apps", filters, view],
-    queryFn: () => Promise.resolve(applications),
-    enabled: !applications
+    queryFn: () => actions.getApplications(filters, view)
   });
   const apps: Application[] = applicationsQuery.data ?? [];
 
@@ -65,7 +64,7 @@ export default function CVSearchPage({ actions, applications }: Props) {
         isOpen={showFilters}
       />
       <CvsDispay
-        applications={apps.length > 0 ? apps : applications}
+        applications={apps}
         handleChange={handleViewChange}
         isPending={applicationsQuery.isFetching}
         toggleFilters={() => setShowFilters(!showFilters)}
