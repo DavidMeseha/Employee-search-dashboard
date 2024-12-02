@@ -12,7 +12,7 @@ export const applications: Application[] = [
       country: "Egypt",
       age: 36,
       experienceYears: 8,
-      degree: " Bachelor's degree",
+      degree: "Bachelor's degree",
       careerLevel: "Consultant",
       field: "Cardiology",
       phone: "201220707190",

@@ -10,11 +10,11 @@ export const countries = [
 export const edu = [
   {
     degree: "Bachelor's degree",
-    count: 0
+    count: 2
   },
   {
     degree: "Master's degree",
-    count: 0
+    count: 2
   },
   {
     degree: "Doctoral degree",
