@@ -47,7 +47,7 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
 
   return (
     <aside
-      className={`fixed bottom-0 start-0 overflow-auto transition-transform lg:overflow-hidden ${isOpen ? "translate-x-0" : "-translate-x-64 lg:translate-x-0"} top-20 w-64 border border-secondary bg-white lg:static lg:h-fit`}
+      className={`sx:z-0 fixed bottom-0 start-0 z-20 overflow-auto transition-transform lg:overflow-hidden ${isOpen ? "translate-x-0" : "-translate-x-64 lg:translate-x-0"} top-20 w-64 border border-secondary bg-white lg:static lg:h-fit`}
     >
       <div className="flex bg-secondary py-3 text-center text-2xl font-bold">
         <span className="flex-grow">Filter</span>

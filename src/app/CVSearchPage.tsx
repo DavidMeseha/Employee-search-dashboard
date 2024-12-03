@@ -58,7 +58,7 @@ export default function CVSearchPage({ actions }: Props) {
     <main className="flex gap-4">
       <SideFilters
         actions={actions}
-        close={() => setShowFilters}
+        close={() => setShowFilters(false)}
         filters={filters}
         handleChange={handleFilterChange}
         isOpen={showFilters}
