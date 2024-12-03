@@ -20,11 +20,11 @@ type Props = {
 export default function ApplicationCard({ application }: Props) {
   const [isLocked, setIsLocked] = useState(application.state === "locked");
   return (
-    <div className="border border-secondary p-6 text-xs">
+    <div className="relative border border-secondary p-2 sm:p-6 text-xs">
       <div className="flex w-full flex-col gap-2 sm:flex-row">
         <Image
           alt=""
-          className="mx-auto h-24 min-w-24 rounded-full object-cover object-top"
+          className="mx-auto mt-3 h-24 min-w-24 rounded-full object-cover object-top sm:mt-0"
           height={100}
           src={application.applicant.imgUrl}
           width={100}
@@ -32,19 +32,21 @@ export default function ApplicationCard({ application }: Props) {
         <div className="flex-grow">
           <div className="flex flex-col-reverse gap-4 sm:flex-row">
             <div className="flex-grow">
-              <div className="flex w-full justify-between">
+              <div className="mb-2 flex w-full flex-col justify-between sm:mb-0 sm:flex-row">
                 <div className="flex gap-2 text-2xl font-semibold">
-                  {application.applicant.name}
+                  <div className="w-full text-center sm:w-auto">{application.applicant.name}</div>
                   {isLocked ? (
-                    <BiLock className="fill-red-600" size={24} />
+                    <BiLock className="absolute start-0 top-0 m-2 fill-red-600 sm:static" size={24} />
                   ) : (
-                    <BiLockOpen className="fill-primary" size={24} />
+                    <BiLockOpen className="absolute start-0 top-0 m-2 fill-primary sm:static" size={24} />
                   )}
                 </div>
-                <span className="text-red-500">Applied {moment(application.appliedDate).fromNow()}</span>
+                <span className="absolute end-0 top-0 p-2 text-red-500 sm:static">
+                  Applied {moment(application.appliedDate).fromNow()}
+                </span>
               </div>
               <div className="mb-2 flex items-start">
-                <div className="grid flex-grow grid-cols-2 items-start gap-2 text-strong-subtext lg:grid-cols-3">
+                <div className="grid flex-grow grid-cols-2 items-start gap-1 text-strong-subtext sm:gap-2 lg:grid-cols-3">
                   <div className="flex items-start gap-4">
                     <FaMapLocationDot className="fill-primary" size={20} />
                     {application.applicant.location}
@@ -72,8 +74,8 @@ export default function ApplicationCard({ application }: Props) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-row-reverse items-center gap-2 sm:block sm:flex-row">
-              <div className="flex items-center gap-4 sm:mb-2">
+            <div className="flex flex-row-reverse items-center justify-center gap-2 sm:block sm:flex-row sm:justify-end">
+              <div className="flex items-center gap-1 sm:mb-2 sm:gap-4">
                 <Link
                   className="border border-secondary p-1.5"
                   href={`https://wa.me/${application.applicant.phone}`}

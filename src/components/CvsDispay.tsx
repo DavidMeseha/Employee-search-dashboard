@@ -19,7 +19,7 @@ type Props = {
 const activeTap = "border-x-[4px] border-b-[4px] border-x-transparent border-b-black pb-2 text-primary-shade";
 export default function CvsDispay({ applications, isPending, view, handleChange, toggleFilters }: Props) {
   return (
-    <section className="min-h-[160dvh] w-[calc(100%)] px-6 lg:w-[calc(100%-256px)]">
+    <section className="min-h-[160dvh] w-[calc(100%)] px-3 sm:p-6 lg:w-[calc(100%-256px)]">
       <h1 className="mb-6 text-2xl font-bold text-primary-shade">Clinical Pharmacist in Damam, Saudi Arabia</h1>
 
       <div className="flex flex-grow flex-col gap-6 text-subtext lg:flex-row">
