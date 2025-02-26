@@ -135,13 +135,15 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
           onToggle={() => setShowEducation(!showEducation)}
         >
           {renderFilterOption(!filters.education.length, `All(${total})`, () => handleChange("education", "all"))}
-          {educationOptions.map((education) =>
-            renderFilterOption(
-              !!filters.education.includes(education.degree),
-              `${education.degree}(${education.count})`,
-              () => handleChange("education", education.degree)
-            )
-          )}
+          {educationOptions.map((education) => (
+            <React.Fragment key={education.degree}>
+              {renderFilterOption(
+                !!filters.education.includes(education.degree),
+                `${education.degree}(${education.count})`,
+                () => handleChange("education", education.degree)
+              )}
+            </React.Fragment>
+          ))}
         </FilterSection>
 
         <FilterSection
