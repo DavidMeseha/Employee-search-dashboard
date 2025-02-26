@@ -21,7 +21,7 @@ export const menu = [
   {
     name: "CV Search",
     to: "/3"
-  },
+  }
 ];
 
 export default function Nav() {

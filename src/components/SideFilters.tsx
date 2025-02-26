@@ -108,14 +108,14 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
       </div>
       <div className="p-2 text-base">
         <FilterSection
-          title="Residency Country"
           isExpanded={showResidency}
-          onToggle={() => setShowResidency(!showResidency)}
           isLoading={countriesQuery.isPending}
           loadingCount={3}
-          showSearch
           searchValue={findCountry}
+          showSearch
+          title="Residency Country"
           onSearchChange={setFindCountry}
+          onToggle={() => setShowResidency(!showResidency)}
         >
           <div className="h-24">
             {renderFilterOption(!filters.country.length, `All(${total})`, () => handleChange("country", "all"))}
@@ -128,11 +128,11 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
         </FilterSection>
 
         <FilterSection
-          title="Education Level"
           isExpanded={showEducation}
-          onToggle={() => setShowEducation(!showEducation)}
           isLoading={educationQuery.isPending}
           loadingCount={5}
+          title="Education Level"
+          onToggle={() => setShowEducation(!showEducation)}
         >
           {renderFilterOption(!filters.education.length, `All(${total})`, () => handleChange("education", "all"))}
           {educationOptions.map((education) =>
@@ -145,11 +145,11 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
         </FilterSection>
 
         <FilterSection
-          title="Years of Experience"
           isExpanded={showExperience}
-          onToggle={() => setShowExperience(!showExperience)}
           isLoading={experianceQuery.isPending}
           loadingCount={5}
+          title="Years of Experience"
+          onToggle={() => setShowExperience(!showExperience)}
         >
           {renderFilterOption(!filters.yearsOfExp.length, `All(${total})`, () => handleChange("yearsOfExp", "all"))}
           {experiance.map((exp) =>

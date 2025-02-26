@@ -10,4 +10,5 @@ npm run check (linting, prettier, types)
 ```
 
 ## Note
+
 - used server actions to simulate data fetching and server calls
