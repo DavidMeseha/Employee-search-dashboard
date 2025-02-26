@@ -20,7 +20,7 @@ type Props = {
 export default function ApplicationCard({ application }: Props) {
   const [isLocked, setIsLocked] = useState(application.state === "locked");
   return (
-    <div className="relative border border-secondary p-2 sm:p-6 text-xs">
+    <div className="relative border border-secondary p-2 text-xs sm:p-6">
       <div className="flex w-full flex-col gap-2 sm:flex-row">
         <Image
           alt=""

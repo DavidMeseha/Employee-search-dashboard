@@ -1,4 +1,5 @@
 export interface Application {
+  id: string;
   appliedDate: string;
   state: "locked" | "unlocked";
   isShortlisted: boolean;

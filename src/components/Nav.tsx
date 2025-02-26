@@ -7,25 +7,21 @@ import React from "react";
 
 export const menu = [
   {
-    name: "Dashboard",
-    to: "/dashboard"
-  },
-  {
-    name: "My Jobs",
-    to: "/my-jobs"
-  },
-  {
     name: "CV Search",
     to: "/"
   },
   {
-    name: "Report",
-    to: "/report"
+    name: "CV Search",
+    to: "/2"
   },
   {
-    name: "Billing",
-    to: "/billing"
-  }
+    name: "CV Search",
+    to: "/1"
+  },
+  {
+    name: "CV Search",
+    to: "/3"
+  },
 ];
 
 export default function Nav() {

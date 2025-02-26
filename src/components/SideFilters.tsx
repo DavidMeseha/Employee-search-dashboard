@@ -5,9 +5,48 @@ import { includesExactObject } from "@/misc";
 import { Actions, Filters } from "@/types";
 import { Collapse, FormControlLabel, List } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useState, useMemo, memo } from "react";
 import { MdExpandLess, MdExpandMore } from "react-icons/md";
 import { CgClose } from "react-icons/cg";
+
+type FilterSectionProps = {
+  title: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+  isLoading: boolean;
+  loadingCount: number;
+  showSearch?: boolean;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  children: React.ReactNode;
+};
+
+const FilterSection = memo(function FilterSection({
+  title,
+  isExpanded,
+  onToggle,
+  isLoading,
+  loadingCount,
+  showSearch,
+  searchValue,
+  onSearchChange,
+  children
+}: FilterSectionProps) {
+  return (
+    <>
+      <button className="mb-2 flex w-full items-start justify-between font-bold" onClick={onToggle}>
+        {title}
+        {isExpanded ? <MdExpandLess /> : <MdExpandMore />}
+      </button>
+      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          {isLoading ? <CheckboxListLoading count={loadingCount} /> : children}
+          {showSearch && <SearchField value={searchValue} onChange={(e) => onSearchChange?.(e.target.value)} />}
+        </List>
+      </Collapse>
+    </>
+  );
+});
 
 type Props = {
   handleChange: (name: keyof Filters, value: any) => void;
@@ -27,23 +66,35 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
     queryKey: ["search-countries-data"],
     queryFn: () => actions.getCVCountries()
   });
-  const countries = countriesQuery.data?.countries ?? [];
-  const total = countriesQuery.data?.total;
-  const filterCountries = countries
-    .filter((country) => country.name.toLowerCase().includes(findCountry.toLowerCase()))
-    .slice(0, 2);
 
   const educationQuery = useQuery({
     queryKey: ["education-filter-data"],
     queryFn: () => actions.getEducationOptions()
   });
-  const educationOptions = educationQuery.data?.edu ?? [];
 
   const experianceQuery = useQuery({
     queryKey: ["experiance-filter-data"],
     queryFn: () => actions.getYearsOfExp()
   });
+
+  const { countries, total } = useMemo(() => {
+    const countries = countriesQuery.data?.countries ?? [];
+    const total = countriesQuery.data?.total;
+    return { countries, total };
+  }, [countriesQuery.data]);
+
+  const filterCountries = useMemo(() => {
+    return countries.filter((country) => country.name.toLowerCase().includes(findCountry.toLowerCase())).slice(0, 2);
+  }, [countries, findCountry]);
+
+  const educationOptions = educationQuery.data?.edu ?? [];
   const experiance = experianceQuery.data?.yearsOfexp ?? [];
+
+  const renderFilterOption = (checked: boolean, label: string, onChange: () => void) => (
+    <li className="py-1">
+      <FormControlLabel checked={checked} control={<AppCheckbox />} label={label} onChange={onChange} />
+    </li>
+  );
 
   return (
     <aside
@@ -56,115 +107,59 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
         </button>
       </div>
       <div className="p-2 text-base">
-        <button
-          className="mb-2 flex w-full items-start justify-between font-bold"
-          onClick={() => setShowResidency(!showResidency)}
+        <FilterSection
+          title="Residency Country"
+          isExpanded={showResidency}
+          onToggle={() => setShowResidency(!showResidency)}
+          isLoading={countriesQuery.isPending}
+          loadingCount={3}
+          showSearch
+          searchValue={findCountry}
+          onSearchChange={setFindCountry}
         >
-          Residency Country
-          {showResidency ? <MdExpandLess /> : <MdExpandMore />}
-        </button>
-        <Collapse in={showResidency} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <div className="h-24">
-              {countriesQuery.isPending ? (
-                <CheckboxListLoading count={3} />
-              ) : (
-                <>
-                  <li className="py-1">
-                    <FormControlLabel
-                      checked={!filters.country.length}
-                      control={<AppCheckbox />}
-                      label={`All(${total})`}
-                      onChange={() => handleChange("country", "all")}
-                    />
-                  </li>
-                  {filterCountries.map((country) => (
-                    <li className="py-1" key={country.name}>
-                      <FormControlLabel
-                        checked={!!filters.country.includes(country.name)}
-                        control={<AppCheckbox />}
-                        label={`${country.name}(${country.count})`}
-                        onChange={() => handleChange("country", country.name)}
-                      />
-                    </li>
-                  ))}
-                </>
-              )}
-            </div>
-            <SearchField value={findCountry} onChange={(e) => setFindCountry(e.target.value)} />
-          </List>
-        </Collapse>
+          <div className="h-24">
+            {renderFilterOption(!filters.country.length, `All(${total})`, () => handleChange("country", "all"))}
+            {filterCountries.map((country) =>
+              renderFilterOption(!!filters.country.includes(country.name), `${country.name}(${country.count})`, () =>
+                handleChange("country", country.name)
+              )
+            )}
+          </div>
+        </FilterSection>
 
-        <button
-          className="mb-2 flex w-full items-start justify-between font-bold"
-          onClick={() => setShowEducation(!showEducation)}
+        <FilterSection
+          title="Education Level"
+          isExpanded={showEducation}
+          onToggle={() => setShowEducation(!showEducation)}
+          isLoading={educationQuery.isPending}
+          loadingCount={5}
         >
-          Education Level
-          {showResidency ? <MdExpandLess /> : <MdExpandMore />}
-        </button>
-        <Collapse in={showEducation} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {educationQuery.isPending ? (
-              <CheckboxListLoading count={5} />
-            ) : (
-              <>
-                <li className="py-1">
-                  <FormControlLabel
-                    checked={!filters.education.length}
-                    control={<AppCheckbox />}
-                    label={`All(${total})`}
-                    onChange={() => handleChange("education", "all")}
-                  />
-                </li>
-                {educationOptions.map((education) => (
-                  <li className="py-1" key={education.degree}>
-                    <FormControlLabel
-                      checked={!!filters.education.includes(education.degree)}
-                      control={<AppCheckbox />}
-                      label={`${education.degree}(${education.count})`}
-                      onChange={() => handleChange("education", education.degree)}
-                    />
-                  </li>
-                ))}
-              </>
-            )}
-          </List>
-        </Collapse>
-        <button
-          className="mb-2 flex w-full items-start justify-between font-bold"
-          onClick={() => setShowExperience(!showExperience)}
+          {renderFilterOption(!filters.education.length, `All(${total})`, () => handleChange("education", "all"))}
+          {educationOptions.map((education) =>
+            renderFilterOption(
+              !!filters.education.includes(education.degree),
+              `${education.degree}(${education.count})`,
+              () => handleChange("education", education.degree)
+            )
+          )}
+        </FilterSection>
+
+        <FilterSection
+          title="Years of Experience"
+          isExpanded={showExperience}
+          onToggle={() => setShowExperience(!showExperience)}
+          isLoading={experianceQuery.isPending}
+          loadingCount={5}
         >
-          Years of Experience
-          {showResidency ? <MdExpandLess /> : <MdExpandMore />}
-        </button>
-        <Collapse in={showExperience} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {experianceQuery.isPending ? (
-              <CheckboxListLoading count={5} />
-            ) : (
-              <>
-                <li className="py-1">
-                  <FormControlLabel
-                    checked={!filters.yearsOfExp.length}
-                    control={<AppCheckbox />}
-                    label={`All(${total})`}
-                    onChange={() => handleChange("yearsOfExp", "all")}
-                  />
-                </li>
-                {experiance.map((exp) => (
-                  <li className="py-1" key={exp.name}>
-                    <FormControlLabel
-                      checked={!!includesExactObject(filters.yearsOfExp, { min: exp.min, max: exp.max })}
-                      control={<AppCheckbox />}
-                      label={`${exp.name}(${exp.count})`}
-                      onChange={() => handleChange("yearsOfExp", { min: exp.min, max: exp.max })}
-                    />
-                  </li>
-                ))}
-              </>
-            )}
-          </List>
-        </Collapse>
+          {renderFilterOption(!filters.yearsOfExp.length, `All(${total})`, () => handleChange("yearsOfExp", "all"))}
+          {experiance.map((exp) =>
+            renderFilterOption(
+              !!includesExactObject(filters.yearsOfExp, { min: exp.min, max: exp.max }),
+              `${exp.name}(${exp.count})`,
+              () => handleChange("yearsOfExp", { min: exp.min, max: exp.max })
+            )
+          )}
+        </FilterSection>
       </div>
     </aside>
   );

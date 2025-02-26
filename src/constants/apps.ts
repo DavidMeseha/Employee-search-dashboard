@@ -2,6 +2,7 @@ import { Application } from "@/types";
 
 export const applications: Application[] = [
   {
+    id: "123",
     appliedDate: "2024-05-01T00:00:00.000Z",
     state: "locked",
     isShortlisted: true,
@@ -36,6 +37,7 @@ export const applications: Application[] = [
     }
   },
   {
+    id: "456",
     appliedDate: "2024-09-01T00:00:00.000Z",
     state: "unlocked",
     isShortlisted: true,
@@ -70,6 +72,7 @@ export const applications: Application[] = [
     }
   },
   {
+    id: "789",
     appliedDate: "2024-11-01T00:00:00.000Z",
     state: "locked",
     isShortlisted: false,
@@ -104,6 +107,7 @@ export const applications: Application[] = [
     }
   },
   {
+    id: "147",
     appliedDate: "2024-11-01T00:00:00.000Z",
     state: "locked",
     isShortlisted: true,
@@ -138,6 +142,7 @@ export const applications: Application[] = [
     }
   },
   {
+    id: "258",
     appliedDate: "2024-09-01T00:00:00.000Z",
     state: "unlocked",
     isShortlisted: false,
@@ -172,6 +177,7 @@ export const applications: Application[] = [
     }
   },
   {
+    id: "369",
     appliedDate: "2024-10-01T00:00:00.000Z",
     state: "locked",
     isShortlisted: true,
