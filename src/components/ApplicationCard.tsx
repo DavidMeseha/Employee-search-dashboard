@@ -2,7 +2,7 @@ import { Application } from "@/types";
 import { Link } from "@mui/material";
 import moment from "moment";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, memo } from "react";
 import { BiDownload, BiLock, BiLockOpen, BiMessageRounded } from "react-icons/bi";
 import { BsPersonFill, BsStarFill } from "react-icons/bs";
 import { FaPhone, FaWhatsappSquare } from "react-icons/fa";
@@ -13,12 +13,62 @@ import { RiMailFill } from "react-icons/ri";
 import CountryFlag from "react-country-flag";
 import Button from "./ui/Button";
 
+type InfoItemProps = {
+  icon: React.ReactNode;
+  text: string;
+};
+
+const InfoItem = memo(function InfoItem({ icon, text }: InfoItemProps) {
+  return (
+    <div className="flex items-start gap-4">
+      {icon}
+      {text}
+    </div>
+  );
+});
+
+type ActionButtonProps = {
+  icon: React.ReactNode;
+  onClick?: () => void;
+};
+
+const ActionButton = memo(function ActionButton({ icon, onClick }: ActionButtonProps) {
+  return (
+    <div className="border border-secondary p-1.5" onClick={onClick}>
+      {icon}
+    </div>
+  );
+});
+
+type ExperienceItemProps = {
+  title: string;
+  country: { code: string; name: string };
+  yearFrom: number;
+  yearTo: number;
+};
+
+const ExperienceItem = memo(function ExperienceItem({ title, country, yearFrom, yearTo }: ExperienceItemProps) {
+  return (
+    <div className="grid grid-cols-4 gap-1 sm:grid-cols-5">
+      <div className="col-span-2 font-bold sm:col-span-3">{title}</div>
+      <div className="order-2 w-28 border border-subtext bg-white p-0.5 ps-2">
+        <CountryFlag className="me-2 rounded-md text-base" countryCode={country.code} svg />
+        <span className="text-[10px]">{country.name}</span>
+      </div>
+      <div className="col-span-2 flex justify-end text-subtext sm:col-span-1">
+        <div className="w-20 text-start">({yearFrom === yearTo ? yearFrom : `${yearFrom} - ${yearTo}`})</div>
+      </div>
+    </div>
+  );
+});
+
 type Props = {
   application: Application;
 };
 
 export default function ApplicationCard({ application }: Props) {
   const [isLocked, setIsLocked] = useState(application.state === "locked");
+
   return (
     <div className="relative border border-secondary p-2 text-xs sm:p-6">
       <div className="flex w-full flex-col gap-2 sm:flex-row">
@@ -47,30 +97,30 @@ export default function ApplicationCard({ application }: Props) {
               </div>
               <div className="mb-2 flex items-start">
                 <div className="grid flex-grow grid-cols-2 items-start gap-1 text-strong-subtext sm:gap-2 lg:grid-cols-3">
-                  <div className="flex items-start gap-4">
-                    <FaMapLocationDot className="fill-primary" size={20} />
-                    {application.applicant.location}
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <GiAges className="fill-primary" size={20} />
-                    {application.applicant.age} years old
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <FaSquarePersonConfined className="fill-primary" size={20} />
-                    {application.applicant.experienceYears} years Experience
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <GiGraduateCap className="fill-primary" size={20} />
-                    {application.applicant.degree}
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <BsPersonFill className="fill-primary" size={20} />
-                    {application.applicant.careerLevel}
-                  </div>
-                  <div className="flex items-start gap-4">
-                    <PiHandbagFill className="fill-primary" size={20} />
-                    {application.applicant.field}
-                  </div>
+                  <InfoItem
+                    icon={<FaMapLocationDot className="fill-primary" size={20} />}
+                    text={application.applicant.location}
+                  />
+                  <InfoItem
+                    icon={<GiAges className="fill-primary" size={20} />}
+                    text={`${application.applicant.age} years old`}
+                  />
+                  <InfoItem
+                    icon={<FaSquarePersonConfined className="fill-primary" size={20} />}
+                    text={`${application.applicant.experienceYears} years Experience`}
+                  />
+                  <InfoItem
+                    icon={<GiGraduateCap className="fill-primary" size={20} />}
+                    text={application.applicant.degree}
+                  />
+                  <InfoItem
+                    icon={<BsPersonFill className="fill-primary" size={20} />}
+                    text={application.applicant.careerLevel}
+                  />
+                  <InfoItem
+                    icon={<PiHandbagFill className="fill-primary" size={20} />}
+                    text={application.applicant.field}
+                  />
                 </div>
               </div>
             </div>
@@ -83,12 +133,8 @@ export default function ApplicationCard({ application }: Props) {
                 >
                   <FaWhatsappSquare className="fill-green-400" size={16} />
                 </Link>
-                <div className="border border-secondary p-1.5">
-                  <BiMessageRounded className="fill-primary" size={16} />
-                </div>
-                <div className="border border-secondary p-1.5">
-                  <BsStarFill className="fill-primary" size={16} />
-                </div>
+                <ActionButton icon={<BiMessageRounded className="fill-primary" size={16} />} />
+                <ActionButton icon={<BsStarFill className="fill-primary" size={16} />} />
               </div>
               {isLocked ? (
                 <Button onClick={() => setIsLocked(false)}>Unlock Profile</Button>
@@ -125,18 +171,13 @@ export default function ApplicationCard({ application }: Props) {
       </div>
       <div className="space-y-1.5 bg-secondary-highlight p-4">
         {application.applicant.experience.map((exp, index) => (
-          <div className="grid grid-cols-4 gap-1 sm:grid-cols-5" key={index}>
-            <div className="col-span-2 font-bold sm:col-span-3">{exp.title}</div>
-            <div className="order-2 w-28 border border-subtext bg-white p-0.5 ps-2">
-              <CountryFlag className="me-2 rounded-md text-base" countryCode={exp.country.code} svg />
-              <span className="text-[10px]">{exp.country.name}</span>
-            </div>
-            <div className="col-span-2 flex justify-end text-subtext sm:col-span-1">
-              <div className="w-20 text-start">
-                ({exp.yearFrom === exp.yearTo ? exp.yearFrom : `${exp.yearFrom} - ${exp.yearTo}`})
-              </div>
-            </div>
-          </div>
+          <ExperienceItem
+            country={exp.country}
+            key={index}
+            title={exp.title}
+            yearFrom={exp.yearFrom}
+            yearTo={exp.yearTo}
+          />
         ))}
       </div>
     </div>
