@@ -1,12 +1,34 @@
 import ApplicationCard from "@/components/ApplicationCard";
 import { Application, View } from "@/types";
 import { MenuItem, Select } from "@mui/material";
-import React from "react";
+import React, { memo, useMemo } from "react";
 import { BiLock, BiLockOpen } from "react-icons/bi";
 import { BsStarFill } from "react-icons/bs";
 import { PiExport } from "react-icons/pi";
 import LoadingSpinner from "./loading-ui/LoadingSpinner";
 import { RiFilterFill } from "react-icons/ri";
+
+type TabButtonProps = {
+  isActive: boolean;
+  onClick: () => void;
+  count: number;
+  label: string;
+  icon?: React.ReactNode;
+};
+
+const TabButton = memo(function TabButton({ isActive, onClick, count, label, icon }: TabButtonProps) {
+  return (
+    <button
+      aria-selected={isActive}
+      className={`flex w-full justify-center py-3 ${isActive ? activeTap : ""}`}
+      role="tab"
+      onClick={onClick}
+    >
+      {`${label}(${count})`}
+      {icon}
+    </button>
+  );
+});
 
 type Props = {
   applications: Application[];
@@ -19,48 +41,44 @@ type Props = {
 const activeTap = "border-x-[4px] border-b-[4px] border-x-transparent border-b-black pb-2 text-primary-shade";
 
 export default function CvsDispay({ applications, isPending, view, handleChange, toggleFilters }: Props) {
+  const tabButtons = useMemo(
+    () => [
+      { state: "all", label: "All Applicants", count: 100 },
+      { state: "locked", label: "Locked", count: 20, icon: <BiLock className="fill-red-600" size={20} /> },
+      { state: "unlocked", label: "Unlocked", count: 5, icon: <BiLockOpen className="fill-primary" size={20} /> },
+      { state: "shortlisted", label: "Shortlisted", count: 50, icon: <BsStarFill className="fill-primary" size={18} /> }
+    ],
+    []
+  );
+
+  const applicationsList = useMemo(
+    () => (
+      <div className="mt-6 space-y-4">
+        {applications.map((app, index) => (
+          <ApplicationCard application={app} key={app.appliedDate + index} />
+        ))}
+      </div>
+    ),
+    [applications]
+  );
   return (
     <section className="min-h-[160dvh] w-[calc(100%)] px-3 sm:p-6 lg:w-[calc(100%-256px)]">
       <h1 className="mb-6 text-2xl font-bold text-primary-shade">Clinical Pharmacist in Damam, Saudi Arabia</h1>
 
       <div className="flex flex-grow flex-col gap-6 text-subtext lg:flex-row">
         <div className="w-full overflow-auto">
-          <ul className="flex min-w-[600px] items-end gap-4 border-b text-center text-sm font-semibold">
-            <li className="w-1/4">
-              <button
-                className={`flex w-full justify-center py-3 ${view.state === "all" ? activeTap : ""}`}
-                onClick={() => handleChange("state", "all")}
-              >
-                All Applicants(100)
-              </button>
-            </li>
-            <li className="w-1/4">
-              <button
-                className={`flex w-full justify-center py-3 ${view.state === "locked" ? activeTap : ""}`}
-                onClick={() => handleChange("state", "locked")}
-              >
-                Locked(20)
-                <BiLock className="fill-red-600" size={20} />
-              </button>
-            </li>
-            <li className="w-1/4">
-              <button
-                className={`flex w-full justify-center py-3 ${view.state === "unlocked" ? activeTap : ""}`}
-                onClick={() => handleChange("state", "unlocked")}
-              >
-                Unlocked(5)
-                <BiLockOpen className="fill-primary" size={20} />
-              </button>
-            </li>
-            <li className="w-1/4">
-              <button
-                className={`flex w-full justify-center py-3 ${view.state === "shortlisted" ? activeTap : ""}`}
-                onClick={() => handleChange("state", "shortlisted")}
-              >
-                Shortlisted(50)
-                <BsStarFill className="fill-primary" size={18} />
-              </button>
-            </li>
+          <ul className="flex min-w-[600px] items-end gap-4 border-b text-center text-sm font-semibold" role="tablist">
+            {tabButtons.map((tab) => (
+              <li className="w-1/4" key={tab.state} role="presentation">
+                <TabButton
+                  count={tab.count}
+                  icon={tab.icon}
+                  isActive={view.state === tab.state}
+                  label={tab.label}
+                  onClick={() => handleChange("state", tab.state)}
+                />
+              </li>
+            ))}
           </ul>
         </div>
 
@@ -100,11 +118,7 @@ export default function CvsDispay({ applications, isPending, view, handleChange,
       {isPending ? (
         <LoadingSpinner />
       ) : applications.length > 0 ? (
-        <div className="mt-6 space-y-4">
-          {applications.map((app, index) => (
-            <ApplicationCard application={app} key={app.appliedDate + index} />
-          ))}
-        </div>
+        <div className="mt-6 space-y-4">{applicationsList}</div>
       ) : (
         <div className="py-12 text-center text-subtext">No Applications Mtch Your Search</div>
       )}

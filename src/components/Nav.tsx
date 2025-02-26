@@ -30,7 +30,7 @@ export default function Nav() {
     <>
       <ul className="hidden lg:flex">
         {menu.map((item) => (
-          <li key={item.name}>
+          <li key={item.name + item.to}>
             <Link className={`px-2.5 ${pathname === item.to ? "text-primary underline" : ""}`} href={item.to}>
               {item.name}
             </Link>
