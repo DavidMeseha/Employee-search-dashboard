@@ -119,11 +119,13 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
         >
           <div className="h-24">
             {renderFilterOption(!filters.country.length, `All(${total})`, () => handleChange("country", "all"))}
-            {filterCountries.map((country) =>
-              renderFilterOption(!!filters.country.includes(country.name), `${country.name}(${country.count})`, () =>
-                handleChange("country", country.name)
-              )
-            )}
+            {filterCountries.map((country) => (
+              <React.Fragment key={country.name}>
+                {renderFilterOption(!!filters.country.includes(country.name), `${country.name}(${country.count})`, () =>
+                  handleChange("country", country.name)
+                )}
+              </React.Fragment>
+            ))}
           </div>
         </FilterSection>
 
@@ -154,13 +156,15 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
           onToggle={() => setShowExperience(!showExperience)}
         >
           {renderFilterOption(!filters.yearsOfExp.length, `All(${total})`, () => handleChange("yearsOfExp", "all"))}
-          {experiance.map((exp) =>
-            renderFilterOption(
-              !!includesExactObject(filters.yearsOfExp, { min: exp.min, max: exp.max }),
-              `${exp.name}(${exp.count})`,
-              () => handleChange("yearsOfExp", { min: exp.min, max: exp.max })
-            )
-          )}
+          {experiance.map((exp) => (
+            <React.Fragment key={exp.min + exp.name + exp.max}>
+              {renderFilterOption(
+                !!includesExactObject(filters.yearsOfExp, { min: exp.min, max: exp.max }),
+                `${exp.name}(${exp.count})`,
+                () => handleChange("yearsOfExp", { min: exp.min, max: exp.max })
+              )}
+            </React.Fragment>
+          ))}
         </FilterSection>
       </div>
     </aside>
