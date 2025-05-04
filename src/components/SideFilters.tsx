@@ -5,8 +5,13 @@ import { FormControlLabel } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState, useMemo } from "react";
 import { CgClose } from "react-icons/cg";
-import { getCVCountries, getEducationOptions, getYearsOfExp } from "@/actions";
+import { getCountries, getEducationOptions, getYearsOfExp } from "@/actions";
 import FilterSection from "./ui/FilterSection";
+import {
+  COUNTRIES_FILTERS_QUERY_KEY,
+  EDUCATION_FILTERS_QUERY_KEY,
+  EXPERIANCE_FILTERS_QUERY_KEY
+} from "@/constants/query-keys";
 
 type Props = {
   handleChange: (name: keyof Filters, value: any) => void;
@@ -19,17 +24,17 @@ export default function SideFilters({ handleChange, filters, isOpen, close }: Pr
   const [findCountry, setFindCountry] = useState("");
 
   const countriesQuery = useQuery({
-    queryKey: ["countries-filter-data"],
-    queryFn: () => getCVCountries()
+    queryKey: [COUNTRIES_FILTERS_QUERY_KEY],
+    queryFn: () => getCountries()
   });
 
   const educationQuery = useQuery({
-    queryKey: ["education-filter-data"],
+    queryKey: [EDUCATION_FILTERS_QUERY_KEY],
     queryFn: () => getEducationOptions()
   });
 
   const experianceQuery = useQuery({
-    queryKey: ["experiance-filter-data"],
+    queryKey: [EXPERIANCE_FILTERS_QUERY_KEY],
     queryFn: () => getYearsOfExp()
   });
 

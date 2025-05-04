@@ -3,21 +3,12 @@
 import { getApplications } from "@/actions";
 import CvsDispay from "@/components/CvsDispay";
 import SideFilters from "@/components/SideFilters";
+import { filtersInit, viewInit } from "@/constants/initials";
+import { APPLICATIONS_QUERY_KEY } from "@/constants/query-keys";
 import { exactObjectIndex, includesExactObject } from "@/misc";
 import { Filters, View } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-
-const filtersInit: Filters = {
-  country: [],
-  education: [],
-  yearsOfExp: []
-};
-
-const viewInit: View = {
-  sortBy: "any",
-  state: "all"
-};
 
 export default function CVSearchPage() {
   const [filters, setFilters] = useState<Filters>(filtersInit);
@@ -25,7 +16,14 @@ export default function CVSearchPage() {
   const [showFilters, setShowFilters] = useState(false);
 
   const applicationsQuery = useQuery({
-    queryKey: ["apps", filters, view],
+    queryKey: [
+      APPLICATIONS_QUERY_KEY,
+      view.state,
+      view.sortBy,
+      ...filters.yearsOfExp,
+      ...filters.country,
+      ...filters.education
+    ],
     queryFn: () => getApplications(filters, view)
   });
   const apps = applicationsQuery.data ?? [];
@@ -61,7 +59,7 @@ export default function CVSearchPage() {
       <CvsDispay
         applications={apps}
         handleChange={handleViewChange}
-        isPending={applicationsQuery.isFetching}
+        isPending={applicationsQuery.isLoading}
         toggleFilters={() => setShowFilters(!showFilters)}
         view={view}
       />
