@@ -1,9 +1,10 @@
 "use client";
 
+import { getApplications } from "@/actions";
 import CvsDispay from "@/components/CvsDispay";
 import SideFilters from "@/components/SideFilters";
 import { exactObjectIndex, includesExactObject } from "@/misc";
-import { Actions, Application, Filters, View } from "@/types";
+import { Filters, View } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
@@ -18,21 +19,16 @@ const viewInit: View = {
   state: "all"
 };
 
-interface Props {
-  actions: Actions;
-  applications: Application[];
-}
-
-export default function CVSearchPage({ actions }: Props) {
+export default function CVSearchPage() {
   const [filters, setFilters] = useState<Filters>(filtersInit);
   const [view, setView] = useState<View>(viewInit);
   const [showFilters, setShowFilters] = useState(false);
 
   const applicationsQuery = useQuery({
     queryKey: ["apps", filters, view],
-    queryFn: () => actions.getApplications(filters, view)
+    queryFn: () => getApplications(filters, view)
   });
-  const apps: Application[] = applicationsQuery.data ?? [];
+  const apps = applicationsQuery.data ?? [];
 
   const handleFilterChange = (name: keyof Filters, value: any) => {
     const tempValues = [...filters[name]];
@@ -57,7 +53,6 @@ export default function CVSearchPage({ actions }: Props) {
   return (
     <main className="flex gap-4">
       <SideFilters
-        actions={actions}
         close={() => setShowFilters(false)}
         filters={filters}
         handleChange={handleFilterChange}

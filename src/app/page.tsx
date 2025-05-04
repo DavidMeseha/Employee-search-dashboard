@@ -1,71 +1,21 @@
-// import CVSearchPage from "@/app/CVSearchPage";
+import CVSearchPage from "@/components/pages/CVSearchPage";
 import { applications } from "@/constants/apps";
-import { countries, edu, yearsOfexp } from "@/constants/constants";
-import { Filters, View } from "@/types";
-import dynamic from "next/dynamic";
+import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
+import { getCVCountries, getEducationOptions, getYearsOfExp } from "@/actions";
 
-const CvsPge = dynamic(() => import("@/app/CVSearchPage"), { ssr: false });
+export const revalidate = 86400;
 
-export default function Home() {
-  async function getCVCountries() {
-    "use server";
-    countries.sort((a, b) => b.count - a.count);
-    return { total: 41, countries };
-  }
+const queryClient = new QueryClient({});
 
-  async function getEducationOptions() {
-    "use server";
-    edu.sort((a, b) => b.count - a.count);
-    return { total: 41, edu };
-  }
-
-  async function getYearsOfExp() {
-    "use server";
-    return { total: 41, yearsOfexp };
-  }
-
-  async function getApplications(filters: Filters, view: View) {
-    "use server";
-    let filtered = [...applications];
-
-    if (filters?.country.length > 0) {
-      filtered = filtered.filter((app) => filters.country.includes(app.applicant.country));
-    }
-    if (filters.education.length > 0) {
-      filtered = filtered.filter((app) => filters.education.includes(app.applicant.degree));
-    }
-    if (filters.yearsOfExp.length > 0) {
-      filtered = filtered.filter(
-        (app) =>
-          !!filters.yearsOfExp.find(
-            (exp) => app.applicant.experienceYears >= exp.min && (!exp.max || app.applicant.experienceYears <= exp.max)
-          )
-      );
-    }
-
-    if (view.state === "locked") {
-      filtered = filtered.filter((app) => app.state === "locked");
-    } else if (view.state === "unlocked") {
-      filtered = filtered.filter((app) => app.state === "unlocked");
-    } else if (view.state === "shortlisted") {
-      filtered = filtered.filter((app) => app.isShortlisted);
-    }
-
-    if (view.sortBy === "age") {
-      filtered = filtered.sort((a, b) => a.applicant.age - b.applicant.age);
-    } else if (view.sortBy === "name") {
-      filtered = filtered.sort((a, b) => (a.applicant.name[0] > b.applicant.name[0] ? 1 : -1));
-    } else if (view.sortBy === "application") {
-      filtered = filtered.sort((a, b) => (new Date(a.appliedDate) < new Date(b.appliedDate) ? 1 : -1));
-    }
-
-    return filtered;
-  }
+export default async function Home() {
+  await queryClient.ensureQueryData({ queryKey: ["apps", {}, {}], queryFn: () => applications });
+  await queryClient.prefetchQuery({ queryKey: ["countries-filter-data"], queryFn: getCVCountries });
+  await queryClient.prefetchQuery({ queryKey: ["education-filter-data"], queryFn: getEducationOptions });
+  await queryClient.prefetchQuery({ queryKey: ["experiance-filter-data"], queryFn: getYearsOfExp });
 
   return (
-    <CvsPge
-      actions={{ getApplications, getCVCountries, getEducationOptions, getYearsOfExp }}
-      applications={applications}
-    />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <CVSearchPage />
+    </HydrationBoundary>
   );
 }

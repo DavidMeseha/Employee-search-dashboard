@@ -11,16 +11,16 @@ export const menu = [
     to: "/"
   },
   {
-    name: "CV Search",
-    to: "/2"
+    name: "Nav x",
+    to: "/"
   },
   {
-    name: "CV Search",
-    to: "/1"
+    name: "Nav y",
+    to: "/"
   },
   {
-    name: "CV Search",
-    to: "/3"
+    name: "Nav z",
+    to: "/"
   }
 ];
 

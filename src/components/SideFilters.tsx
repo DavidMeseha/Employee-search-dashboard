@@ -1,80 +1,36 @@
-import CheckboxListLoading from "@/components/loading-ui/CheckboxListLoading";
 import AppCheckbox from "@/components/ui/AppCheckbox";
-import SearchField from "@/components/ui/SearchField";
 import { includesExactObject } from "@/misc";
-import { Actions, Filters } from "@/types";
-import { Collapse, FormControlLabel, List } from "@mui/material";
+import { Filters } from "@/types";
+import { FormControlLabel } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import React, { useState, useMemo, memo } from "react";
-import { MdExpandLess, MdExpandMore } from "react-icons/md";
+import React, { useState, useMemo } from "react";
 import { CgClose } from "react-icons/cg";
-
-type FilterSectionProps = {
-  title: string;
-  isExpanded: boolean;
-  onToggle: () => void;
-  isLoading: boolean;
-  loadingCount: number;
-  showSearch?: boolean;
-  searchValue?: string;
-  onSearchChange?: (value: string) => void;
-  children: React.ReactNode;
-};
-
-const FilterSection = memo(function FilterSection({
-  title,
-  isExpanded,
-  onToggle,
-  isLoading,
-  loadingCount,
-  showSearch,
-  searchValue,
-  onSearchChange,
-  children
-}: FilterSectionProps) {
-  return (
-    <>
-      <button className="mb-2 flex w-full items-start justify-between font-bold" onClick={onToggle}>
-        {title}
-        {isExpanded ? <MdExpandLess /> : <MdExpandMore />}
-      </button>
-      <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {isLoading ? <CheckboxListLoading count={loadingCount} /> : children}
-          {showSearch && <SearchField value={searchValue} onChange={(e) => onSearchChange?.(e.target.value)} />}
-        </List>
-      </Collapse>
-    </>
-  );
-});
+import { getCVCountries, getEducationOptions, getYearsOfExp } from "@/actions";
+import FilterSection from "./ui/FilterSection";
 
 type Props = {
   handleChange: (name: keyof Filters, value: any) => void;
   filters: Filters;
   isOpen: boolean;
   close: () => void;
-  actions: Actions;
 };
 
-export default function SideFilters({ handleChange, filters, isOpen, close, actions }: Props) {
-  const [showResidency, setShowResidency] = useState<boolean>(true);
-  const [showEducation, setShowEducation] = useState<boolean>(true);
-  const [showExperience, setShowExperience] = useState<boolean>(true);
+export default function SideFilters({ handleChange, filters, isOpen, close }: Props) {
   const [findCountry, setFindCountry] = useState("");
 
   const countriesQuery = useQuery({
-    queryKey: ["search-countries-data"],
-    queryFn: () => actions.getCVCountries()
+    queryKey: ["countries-filter-data"],
+    queryFn: () => getCVCountries()
   });
 
   const educationQuery = useQuery({
     queryKey: ["education-filter-data"],
-    queryFn: () => actions.getEducationOptions()
+    queryFn: () => getEducationOptions()
   });
 
   const experianceQuery = useQuery({
     queryKey: ["experiance-filter-data"],
-    queryFn: () => actions.getYearsOfExp()
+    queryFn: () => getYearsOfExp()
   });
 
   const { countries, total } = useMemo(() => {
@@ -108,14 +64,13 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
       </div>
       <div className="p-2 text-base">
         <FilterSection
-          isExpanded={showResidency}
+          isExpanded={true}
           isLoading={countriesQuery.isPending}
           loadingCount={3}
           searchValue={findCountry}
           showSearch
           title="Residency Country"
           onSearchChange={setFindCountry}
-          onToggle={() => setShowResidency(!showResidency)}
         >
           <div className="h-24">
             {renderFilterOption(!filters.country.length, `All(${total})`, () => handleChange("country", "all"))}
@@ -129,13 +84,7 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
           </div>
         </FilterSection>
 
-        <FilterSection
-          isExpanded={showEducation}
-          isLoading={educationQuery.isPending}
-          loadingCount={5}
-          title="Education Level"
-          onToggle={() => setShowEducation(!showEducation)}
-        >
+        <FilterSection isExpanded={true} isLoading={educationQuery.isPending} loadingCount={5} title="Education Level">
           {renderFilterOption(!filters.education.length, `All(${total})`, () => handleChange("education", "all"))}
           {educationOptions.map((education) => (
             <React.Fragment key={education.degree}>
@@ -149,11 +98,10 @@ export default function SideFilters({ handleChange, filters, isOpen, close, acti
         </FilterSection>
 
         <FilterSection
-          isExpanded={showExperience}
+          isExpanded={true}
           isLoading={experianceQuery.isPending}
           loadingCount={5}
           title="Years of Experience"
-          onToggle={() => setShowExperience(!showExperience)}
         >
           {renderFilterOption(!filters.yearsOfExp.length, `All(${total})`, () => handleChange("yearsOfExp", "all"))}
           {experiance.map((exp) => (
